@@ -3,35 +3,36 @@ import pptxgen from "pptxgenjs";
 
 export const runtime = "nodejs";
 
-// ── Inline formatting ─────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-interface Run {
-  text: string;
-  bold?: boolean;
-  italic?: boolean;
-}
+interface Run   { text: string; bold?: boolean; italic?: boolean; }
+type Cell       = Run[];        // one table cell = styled text runs
+type PRow       = Cell[];       // one table row  = array of cells
+type PTable     = PRow[];       // many rows
 
-/**
- * Parse inline markdown into styled text runs.
- * Handles ***bold-italic***, **bold**, *italic*, `code`, [link](url), ~~strikethrough~~.
- * Code and strikethrough map to plain text (no PPTX equivalent worth adding).
- */
+interface BulletsBlock { kind: "bullets"; lines: Run[][]; }
+interface TableBlock   { kind: "table";   header: PTable; body: PTable; }
+type ContentBlock = BulletsBlock | TableBlock;
+
+interface SlideData { title: Run[]; isH1: boolean; blocks: ContentBlock[]; }
+
+// ─── Inline markdown parser ───────────────────────────────────────────────────
+
 function parseInline(raw: string): Run[] {
   const runs: Run[] = [];
-  const RE = /\*\*\*(.+?)\*\*\*|\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`|\[([^\]]+)\]\([^)]*\)|~~(.+?)~~/g;
+  const RE =
+    /\*\*\*(.+?)\*\*\*|\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`|\[([^\]]+)\]\([^)]*\)|~~(.+?)~~/g;
   let last = 0;
   let m: RegExpExecArray | null;
 
   while ((m = RE.exec(raw)) !== null) {
     if (m.index > last) runs.push({ text: raw.slice(last, m.index) });
-
-    if (m[1] !== undefined)      runs.push({ text: m[1], bold: true, italic: true });
+    if      (m[1] !== undefined) runs.push({ text: m[1], bold: true, italic: true });
     else if (m[2] !== undefined) runs.push({ text: m[2], bold: true });
     else if (m[3] !== undefined) runs.push({ text: m[3], italic: true });
-    else if (m[4] !== undefined) runs.push({ text: m[4] });  // inline code
-    else if (m[5] !== undefined) runs.push({ text: m[5] });  // link text
-    else if (m[6] !== undefined) runs.push({ text: m[6] });  // strikethrough
-
+    else if (m[4] !== undefined) runs.push({ text: m[4] });   // `code`  → plain
+    else if (m[5] !== undefined) runs.push({ text: m[5] });   // [link]  → text
+    else if (m[6] !== undefined) runs.push({ text: m[6] });   // ~~str~~ → plain
     last = RE.lastIndex;
   }
 
@@ -39,71 +40,151 @@ function parseInline(raw: string): Run[] {
   return runs.length > 0 ? runs : [{ text: raw }];
 }
 
-// ── Slide model ───────────────────────────────────────────────────────────
+// ─── Table helpers ────────────────────────────────────────────────────────────
 
-interface SlideData {
-  title: Run[];
-  isH1: boolean;
-  /** Each entry is one line (bullet/paragraph) expressed as styled runs. */
-  bullets: Run[][];
+function isTableLine(line: string): boolean {
+  const t = line.trim();
+  return t.startsWith("|") && t.endsWith("|") && t.length > 2;
 }
+
+/** Split `| a | b | c |` into trimmed cell strings. */
+function splitCells(line: string): string[] {
+  return line.trim().slice(1, -1).split("|").map((c) => c.trim());
+}
+
+/** Separator rows look like `|---|:---:|---:|`. */
+function isSeparatorRow(cells: string[]): boolean {
+  return cells.length > 0 && cells.every((c) => /^:?-+:?$/.test(c));
+}
+
+/**
+ * Turn buffered raw table lines into a TableBlock.
+ * Rows before the `---|---` separator → header; rows after → body.
+ */
+function buildTableBlock(rawLines: string[]): TableBlock {
+  const parsed = rawLines.map(splitCells);
+  const sepIdx = parsed.findIndex(isSeparatorRow);
+
+  // header rows: everything before the separator (usually one row)
+  const headerRaws = sepIdx > 0  ? parsed.slice(0, sepIdx)  : [];
+  // body rows:   everything after the separator (or all rows if no separator)
+  const bodyRaws   = sepIdx >= 0 ? parsed.slice(sepIdx + 1) : parsed;
+
+  const toTable = (raws: string[][]): PTable =>
+    raws.map((row) => row.map((cell) => parseInline(cell)));
+
+  return { kind: "table", header: toTable(headerRaws), body: toTable(bodyRaws) };
+}
+
+// ─── Markdown → slide model ───────────────────────────────────────────────────
 
 function parseMarkdown(markdown: string): SlideData[] {
   const slides: SlideData[] = [];
   let current: SlideData | null = null;
   let inCodeBlock = false;
+  let pendingBullets: Run[][] = [];
+  let pendingTableLines: string[] = [];
 
-  const flush = () => { if (current) slides.push(current); };
+  const flushBullets = () => {
+    if (pendingBullets.length > 0 && current) {
+      current.blocks.push({ kind: "bullets", lines: pendingBullets });
+      pendingBullets = [];
+    }
+  };
+
+  const flushTable = () => {
+    if (pendingTableLines.length > 0 && current) {
+      current.blocks.push(buildTableBlock(pendingTableLines));
+      pendingTableLines = [];
+    }
+  };
+
+  const flushSlide = () => {
+    flushBullets();
+    flushTable();
+    if (current) slides.push(current);
+    current = null;
+  };
 
   for (const rawLine of markdown.split("\n")) {
     const line = rawLine.trimEnd();
 
-    // Toggle code block — skip content inside
+    // Code fence — skip interior content
     if (line.startsWith("```")) { inCodeBlock = !inCodeBlock; continue; }
     if (inCodeBlock) continue;
 
-    // Horizontal rules become slide breaks (new blank slide start)
-    if (/^(-{3,}|\*{3,})$/.test(line)) { flush(); current = null; continue; }
+    // Horizontal rule → slide break
+    if (/^(-{3,}|\*{3,})$/.test(line)) { flushSlide(); continue; }
 
-    const hN       = line.match(/^(#{1,6})\s+(.+)/);
-    const bullet   = line.match(/^[-*]\s+(.+)/);
-    const numbered = line.match(/^\d+\.\s+(.+)/);
-    const bq       = line.match(/^>\s*(.*)/);
+    // Table row — accumulate
+    if (isTableLine(line)) {
+      flushBullets();           // close any open bullet block before the table
+      pendingTableLines.push(line);
+      continue;
+    }
+
+    // Non-table line → flush any buffered table rows
+    flushTable();
+
+    const hN     = line.match(/^(#{1,6})\s+(.+)/);
+    const bullet = line.match(/^[-*]\s+(.+)/);
+    const num    = line.match(/^\d+\.\s+(.+)/);
+    const bq     = line.match(/^>\s*(.*)/);
 
     if (hN) {
       const level = hN[1].length;
       const text  = hN[2];
       if (level <= 2) {
-        flush();
-        current = { title: parseInline(text), isH1: level === 1, bullets: [] };
+        flushSlide();
+        current = { title: parseInline(text), isH1: level === 1, blocks: [] };
       } else {
-        // h3–h6 → bold bullet on current slide
-        if (!current) current = { title: [], isH1: true, bullets: [] };
-        current.bullets.push(parseInline(text).map((r) => ({ ...r, bold: true })));
+        // h3–h6 → bold bullet on the current slide (no new slide)
+        if (!current) current = { title: [], isH1: true, blocks: [] };
+        pendingBullets.push(parseInline(text).map((r) => ({ ...r, bold: true as const })));
       }
     } else if (bullet) {
-      if (!current) current = { title: [], isH1: true, bullets: [] };
-      current.bullets.push(parseInline(bullet[1]));
-    } else if (numbered) {
-      if (!current) current = { title: [], isH1: true, bullets: [] };
-      current.bullets.push(parseInline(numbered[1]));
+      if (!current) current = { title: [], isH1: true, blocks: [] };
+      pendingBullets.push(parseInline(bullet[1]));
+    } else if (num) {
+      if (!current) current = { title: [], isH1: true, blocks: [] };
+      pendingBullets.push(parseInline(num[1]));
     } else if (bq && bq[1].trim()) {
-      if (!current) current = { title: [], isH1: true, bullets: [] };
-      current.bullets.push(parseInline(bq[1].trim()));
+      if (!current) current = { title: [], isH1: true, blocks: [] };
+      pendingBullets.push(parseInline(bq[1].trim()));
     } else if (line.trim() && current) {
-      current.bullets.push(parseInline(line.trim()));
+      pendingBullets.push(parseInline(line.trim()));
     }
   }
 
-  flush();
+  flushSlide();
   return slides;
 }
 
-// ── pptxgenjs helpers ─────────────────────────────────────────────────────
+// ─── pptxgenjs rendering helpers ─────────────────────────────────────────────
 
 /**
- * Convert slide bullets (array of lines, each a Run[]) to pptxgenjs text items.
- * The first run of each line gets `bullet: true`; the rest continue the paragraph.
+ * Convert a Cell (Run[]) into pptxgenjs cell text.
+ * Returns a plain string for simple cells, IText[] for formatted ones.
+ */
+function cellToText(cell: Cell): string | object[] {
+  if (cell.length === 0) return "";
+  if (cell.length === 1 && !cell[0].bold && !cell[0].italic) return cell[0].text;
+  return cell.map((r) => ({
+    text: r.text,
+    options: { bold: r.bold ?? false, italic: r.italic ?? false },
+  }));
+}
+
+function titleToItems(runs: Run[], fontSize: number, color: string): object[] {
+  return runs.map((r) => ({
+    text: r.text,
+    options: { fontSize, color, bold: true, italic: r.italic ?? false },
+  }));
+}
+
+/**
+ * Build a flat text-item array for addText (bullets / paragraphs).
+ * First run in each line gets `bullet: true` to open a new paragraph.
  */
 function bulletsToItems(lines: Run[][], fontSize: number, color: string): object[] {
   const items: object[] = [];
@@ -113,8 +194,7 @@ function bulletsToItems(lines: Run[][], fontSize: number, color: string): object
         text: run.text,
         options: {
           ...(i === 0 ? { bullet: true } : {}),
-          fontSize,
-          color,
+          fontSize, color,
           bold:   run.bold   ?? false,
           italic: run.italic ?? false,
         },
@@ -124,15 +204,55 @@ function bulletsToItems(lines: Run[][], fontSize: number, color: string): object
   return items;
 }
 
-/** Title is always bold; italic flag can still override per-run. */
-function titleToItems(runs: Run[], fontSize: number, color: string): object[] {
-  return runs.map((r) => ({
-    text: r.text,
-    options: { fontSize, color, bold: true, italic: r.italic ?? false },
-  }));
+/** Build pptxgenjs rows for addTable — header rows with accent fill, body with zebra stripes. */
+function buildPptxRows(block: TableBlock): object[][] {
+  const rows: object[][] = [];
+
+  for (const pRow of block.header) {
+    rows.push(
+      pRow.map((cell) => ({
+        text: cellToText(cell),
+        options: {
+          bold: true,
+          fill:   { color: "4472C4" },
+          color:  "FFFFFF",
+          fontSize: 14,
+          align:  "center",
+          valign: "middle",
+        },
+      })),
+    );
+  }
+
+  block.body.forEach((pRow, i) => {
+    rows.push(
+      pRow.map((cell) => ({
+        text: cellToText(cell),
+        options: {
+          fill:   { color: i % 2 === 0 ? "FFFFFF" : "EEF2FA" },
+          color:  "363636",
+          fontSize: 13,
+          align:  "left",
+          valign: "middle",
+        },
+      })),
+    );
+  });
+
+  return rows;
 }
 
-// ── Route handler ─────────────────────────────────────────────────────────
+// ─── Layout constants (LAYOUT_16x9 = 10 × 7.5 in) ────────────────────────────
+
+const MARGIN_X    = 0.5;
+const W_STR       = "90%";  // percentage for addText
+const W_NUM       = 9.0;    // inches for addTable
+const ROW_H       = 0.42;   // table row height (in)
+const BULLET_H    = 0.45;   // estimated height per bullet line (in)
+const TITLE_END_Y = 1.8;
+const MAX_Y       = 7.0;
+
+// ─── Route handler ────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
   try {
@@ -153,7 +273,7 @@ export async function POST(request: NextRequest) {
     if (slides.length === 0) {
       const slide = prs.addSlide();
       slide.addText(markdown.trim() || "Empty Presentation", {
-        x: 0.5, y: 2.5, w: "85%", h: 1,
+        x: MARGIN_X, y: 2.5, w: W_STR, h: 1,
         fontSize: 24, align: "center", color: "363636",
       });
     } else {
@@ -163,15 +283,34 @@ export async function POST(request: NextRequest) {
         if (s.title.length > 0) {
           slide.addText(
             titleToItems(s.title, s.isH1 ? 36 : 28, "1a1a2e"),
-            { x: 0.5, y: 0.3, w: "90%", h: 1.2, valign: "middle" },
+            { x: MARGIN_X, y: 0.3, w: W_STR, h: 1.2, valign: "middle" },
           );
         }
 
-        if (s.bullets.length > 0) {
-          slide.addText(
-            bulletsToItems(s.bullets, 20, "363636"),
-            { x: 0.5, y: s.title.length > 0 ? 1.8 : 0.5, w: "90%", h: 4.5, valign: "top" },
-          );
+        let y = s.title.length > 0 ? TITLE_END_Y : 0.5;
+
+        for (const block of s.blocks) {
+          if (y >= MAX_Y) break;
+
+          if (block.kind === "bullets") {
+            const h = Math.min(block.lines.length * BULLET_H, MAX_Y - y);
+            slide.addText(bulletsToItems(block.lines, 18, "363636"), {
+              x: MARGIN_X, y, w: W_STR, h, valign: "top",
+            });
+            y += h + 0.15;
+          } else {
+            const totalRows = block.header.length + block.body.length;
+            const pptxRows  = buildPptxRows(block);
+            if (pptxRows.length > 0) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              slide.addTable(pptxRows as any, {
+                x: MARGIN_X, y, w: W_NUM,
+                rowH: ROW_H,
+                border: { pt: 1, color: "D1D5DB" },
+              });
+              y += totalRows * ROW_H + 0.3;
+            }
+          }
         }
       }
     }
