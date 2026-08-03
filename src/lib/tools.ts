@@ -4,7 +4,7 @@ export const TOOLS: ToolConfig[] = [
   {
     id: "md-to-pdf",
     name: "MD ⇆ PDF",
-    description: "Convert between Markdown and PDF — edit before converting",
+    description: "Convert between Markdown and PDF - edit before converting",
     inputLabel: "Markdown",
     outputLabel: "PDF",
     acceptedTypes: ".md,.markdown,.txt",
@@ -15,7 +15,8 @@ export const TOOLS: ToolConfig[] = [
   {
     id: "md-to-docx",
     name: "MD ⇆ DOCX",
-    description: "Convert between Markdown and Word documents — edit before converting",
+    description:
+      "Convert between Markdown and Word documents - edit before converting",
     inputLabel: "Markdown",
     outputLabel: "DOCX",
     acceptedTypes: ".md,.markdown,.txt",
@@ -60,8 +61,9 @@ export const TOOLS: ToolConfig[] = [
   },
   {
     id: "image-to-pdf",
-    name: "Image → PDF",
-    description: "Combine images into a single PDF document",
+    name: "Image ⇆ PDF",
+    description:
+      "Convert between images and PDF - combine images or extract pages",
     inputLabel: "Images",
     outputLabel: "PDF",
     acceptedTypes: ".png,.jpg,.jpeg,.webp,.gif,.bmp",
@@ -76,9 +78,10 @@ export const TOOLS: ToolConfig[] = [
     inputLabel: "PDF",
     outputLabel: "Images",
     acceptedTypes: ".pdf",
-    maxFiles: 10,
+    maxFiles: 1,
     icon: "Image",
     category: "convert",
+    hidden: true,
   },
   {
     id: "pdf-crop",

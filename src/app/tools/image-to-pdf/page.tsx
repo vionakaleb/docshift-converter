@@ -1,5 +1,5 @@
 import { getToolConfig } from "@/lib/tools";
-import { ConverterPage } from "@/components/converter/converter-page";
+import { BidirectionalImageConverter } from "@/components/converter/bidirectional-image-converter";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -16,7 +16,8 @@ export function generateMetadata(): Metadata {
 }
 
 export default function ToolPage() {
-  const tool = getToolConfig(toolId);
-  if (!tool) notFound();
-  return <ConverterPage tool={tool} />;
+  const forwardTool = getToolConfig("image-to-pdf");
+  const reverseTool = getToolConfig("pdf-to-image");
+  if (!forwardTool || !reverseTool) notFound();
+  return <BidirectionalImageConverter forwardTool={forwardTool} reverseTool={reverseTool} />;
 }

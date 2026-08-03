@@ -255,7 +255,7 @@ export function BidirectionalMdConverter({ forwardTool, reverseTool }: Props) {
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">
                   ## H2
                 </code>{" "}
-                — headings
+                - headings
               </li>
               <li>
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">
@@ -265,18 +265,18 @@ export function BidirectionalMdConverter({ forwardTool, reverseTool }: Props) {
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">
                   *italic*
                 </code>{" "}
-                — inline styles
+                - inline styles
               </li>
               <li>
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">
                   - item
                 </code>{" "}
-                — bullet list
+                - bullet list
                 {"  ·  "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">
                   | col |
                 </code>{" "}
-                — tables
+                - tables
               </li>
             </ul>
           </div>

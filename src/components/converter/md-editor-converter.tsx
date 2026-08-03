@@ -185,15 +185,15 @@ export function MdEditorConverter({ tool }: MdEditorConverterProps) {
             <ul className="list-inside list-disc space-y-1">
               <li>
                 <code className="rounded bg-muted px-1 py-0.5 text-xs"># Title</code>
-                {" "}— new slide with large title
+                {" "}- new slide with large title
               </li>
               <li>
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">## Section</code>
-                {" "}— new slide with smaller title
+                {" "}- new slide with smaller title
               </li>
               <li>
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">- item</code>
-                {" "}— bullet point on current slide
+                {" "}- bullet point on current slide
               </li>
               <li>Plain text lines become content on the current slide</li>
             </ul>
@@ -206,21 +206,21 @@ export function MdEditorConverter({ tool }: MdEditorConverterProps) {
                 <code className="rounded bg-muted px-1 py-0.5 text-xs"># H1</code>
                 {", "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">## H2</code>
-                {" "}— headings
+                {" "}- headings
               </li>
               <li>
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">**bold**</code>
                 {", "}
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">*italic*</code>
-                {" "}— inline styles
+                {" "}- inline styles
               </li>
               <li>
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">- item</code>
-                {" "}— bullet list
+                {" "}- bullet list
               </li>
               <li>
                 <code className="rounded bg-muted px-1 py-0.5 text-xs">| col |</code>
-                {" "}— tables
+                {" "}- tables
               </li>
             </ul>
           </>
