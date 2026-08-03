@@ -24,6 +24,17 @@ export const TOOLS: ToolConfig[] = [
     category: "convert",
   },
   {
+    id: "md-to-pptx",
+    name: "MD → PPTX",
+    description: "Convert Markdown to a PowerPoint presentation with an editor",
+    inputLabel: "Markdown",
+    outputLabel: "PPTX",
+    acceptedTypes: ".md,.markdown,.txt",
+    maxFiles: 1,
+    icon: "Presentation",
+    category: "convert",
+  },
+  {
     id: "pdf-to-md",
     name: "PDF → MD",
     description: "Extract text from PDFs as Markdown with formatting",

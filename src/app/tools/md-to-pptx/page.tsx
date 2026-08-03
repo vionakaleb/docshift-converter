@@ -3,7 +3,7 @@ import { MdEditorConverter } from "@/components/converter/md-editor-converter";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-const toolId = "md-to-docx";
+const toolId = "md-to-pptx";
 
 export function generateMetadata(): Metadata {
   const tool = getToolConfig(toolId);

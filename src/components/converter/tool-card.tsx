@@ -6,6 +6,8 @@ import {
   Crop,
   Scissors,
   Merge,
+  Presentation,
+  FileCode,
   ArrowRight,
 } from "lucide-react";
 import { ToolConfig } from "@/types";
@@ -18,6 +20,8 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Crop,
   Scissors,
   Merge,
+  Presentation,
+  FileCode,
 };
 
 interface ToolCardProps {

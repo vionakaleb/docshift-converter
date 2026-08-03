@@ -1,6 +1,7 @@
 export type ToolId =
   | "md-to-pdf"
   | "md-to-docx"
+  | "md-to-pptx"
   | "pdf-to-md"
   | "docx-to-md"
   | "image-to-pdf"
