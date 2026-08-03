@@ -1,0 +1,57 @@
+import type { Metadata } from "next";
+import { ThemeProvider } from "@/components/layout/theme-provider";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "DocShift — Free Document Converter",
+  description:
+    "Convert Markdown, PDF, DOCX, and images. Split, merge, and crop PDFs. Free, open source, and privacy-first.",
+  keywords: [
+    "document converter",
+    "markdown to pdf",
+    "pdf to markdown",
+    "docx converter",
+    "pdf merge",
+    "pdf split",
+    "pdf crop",
+    "image to pdf",
+    "free converter",
+    "open source",
+  ],
+  openGraph: {
+    title: "DocShift — Free Document Converter",
+    description:
+      "Convert Markdown, PDF, DOCX, and images. Split, merge, and crop PDFs. Free and open source.",
+    type: "website",
+    locale: "en_US",
+    siteName: "DocShift",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "DocShift — Free Document Converter",
+    description:
+      "Convert Markdown, PDF, DOCX, and images. Split, merge, and crop PDFs. Free and open source.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className="font-sans antialiased">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <div className="flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
