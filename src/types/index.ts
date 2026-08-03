@@ -39,6 +39,7 @@ export interface ToolConfig {
   icon: string;
   category: "convert" | "manipulate" | "builder";
   href?: string;
+  hidden?: boolean;
 }
 
 export interface ConversionResult {

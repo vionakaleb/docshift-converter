@@ -1,22 +1,5 @@
-import { getToolConfig } from "@/lib/tools";
-import { ConverterPage } from "@/components/converter/converter-page";
-import { notFound } from "next/navigation";
-import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-const toolId = "pdf-to-md";
-
-export function generateMetadata(): Metadata {
-  const tool = getToolConfig(toolId);
-  if (!tool) return {};
-  return {
-    title: `${tool.name} - DocShift`,
-    description: tool.description,
-    openGraph: { title: `${tool.name} - DocShift`, description: tool.description },
-  };
-}
-
-export default function ToolPage() {
-  const tool = getToolConfig(toolId);
-  if (!tool) notFound();
-  return <ConverterPage tool={tool} />;
+export default function Page() {
+  redirect("/tools/md-to-pdf");
 }

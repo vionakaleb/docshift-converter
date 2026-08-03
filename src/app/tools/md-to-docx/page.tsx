@@ -1,5 +1,5 @@
 import { getToolConfig } from "@/lib/tools";
-import { MdEditorConverter } from "@/components/converter/md-editor-converter";
+import { BidirectionalMdConverter } from "@/components/converter/bidirectional-md-converter";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -16,7 +16,8 @@ export function generateMetadata(): Metadata {
 }
 
 export default function ToolPage() {
-  const tool = getToolConfig(toolId);
-  if (!tool) notFound();
-  return <MdEditorConverter tool={tool} />;
+  const forwardTool = getToolConfig("md-to-docx");
+  const reverseTool = getToolConfig("docx-to-md");
+  if (!forwardTool || !reverseTool) notFound();
+  return <BidirectionalMdConverter forwardTool={forwardTool} reverseTool={reverseTool} />;
 }

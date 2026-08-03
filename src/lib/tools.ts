@@ -3,8 +3,8 @@ import { ToolConfig } from "@/types";
 export const TOOLS: ToolConfig[] = [
   {
     id: "md-to-pdf",
-    name: "MD → PDF",
-    description: "Convert Markdown files to beautifully formatted PDFs",
+    name: "MD ⇆ PDF",
+    description: "Convert between Markdown and PDF — edit before converting",
     inputLabel: "Markdown",
     outputLabel: "PDF",
     acceptedTypes: ".md,.markdown,.txt",
@@ -14,8 +14,8 @@ export const TOOLS: ToolConfig[] = [
   },
   {
     id: "md-to-docx",
-    name: "MD → DOCX",
-    description: "Convert Markdown to Word documents",
+    name: "MD ⇆ DOCX",
+    description: "Convert between Markdown and Word documents — edit before converting",
     inputLabel: "Markdown",
     outputLabel: "DOCX",
     acceptedTypes: ".md,.markdown,.txt",
@@ -44,6 +44,7 @@ export const TOOLS: ToolConfig[] = [
     maxFiles: 10,
     icon: "FileSearch",
     category: "convert",
+    hidden: true,
   },
   {
     id: "docx-to-md",
@@ -55,6 +56,7 @@ export const TOOLS: ToolConfig[] = [
     maxFiles: 10,
     icon: "FileSearch",
     category: "convert",
+    hidden: true,
   },
   {
     id: "image-to-pdf",

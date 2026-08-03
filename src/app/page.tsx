@@ -3,7 +3,7 @@ import { ToolCard } from "@/components/converter/tool-card";
 import { ArrowLeftRight } from "lucide-react";
 
 export default function HomePage() {
-  const converters = TOOLS.filter((t) => t.category === "convert");
+  const converters = TOOLS.filter((t) => t.category === "convert" && !t.hidden);
   const manipulators = TOOLS.filter((t) => t.category === "manipulate");
   const builders = TOOLS.filter((t) => t.category === "builder");
 
