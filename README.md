@@ -1,18 +1,23 @@
-# DocShift
+# DocShift - Document Utilities, 100% Browser‑Side
 
-Free, open-source document converter. Convert Markdown, PDF, DOCX, and images. Split, merge, and crop PDFs. Your files stay private.
+Convert Markdown, PDF, DOCX, and images. Split, merge, and crop PDFs. Build PPTX. Free, secured and privacy-first. Your files stay private.
 
 ## Features
 
-- **MD → PDF** — Markdown to styled PDF via print dialog
-- **MD → DOCX** — Markdown to Word with headings, bold, italic, tables, code
-- **PDF → MD** — Extract text from PDFs as Markdown with formatting detection
-- **DOCX → MD** — Word to clean Markdown
-- **Image → PDF** — Combine PNG, JPG, WebP, GIF, BMP into a PDF
-- **PDF → Image** — Render PDF pages as high-quality PNGs
-- **PDF Crop** — Visual drag-to-crop selection
-- **PDF Split** — Split pages into individual files
-- **PDF Merge** — Combine multiple PDFs into one
+- 📄 **MD → PDF** – Generate PDFs from Markdown
+- 📝 **MD → DOCX** – Create Word documents from Markdown
+- 🔍 **PDF → MD** – Extract text, bold, italic, headers, tables
+- 🔄 **DOCX → MD** – Convert Word to Markdown (basic formatting)
+- 🖼️ **Image → PDF** – Combine images into a single PDF
+- 🧩 **PDF → Image** – Extract pages as PNG/JPG
+- ✂️ **PDF Crop** – Trim pages to custom bounds
+- 📑 **Split PDF** – Extract selected pages
+- 🧬 **Merge PDF** – Combine multiple PDFs
+- 🎨 **PPTX Builder** – Write a pptxgenjs script and get a .pptx file
+
+## Why this exists
+
+Generating complex formats with AI burns tokens. Markdown is cheap. DocShift converts cheap MD into the formats you actually need—all locally, privately, and for free.
 
 ## Privacy
 
@@ -33,6 +38,15 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+## How To Use
+
+1. Open the app
+2. Choose your tool
+3. Upload or paste your content
+4. Download the result
+
+No sign‑up, no server, no trace.
 
 ## Testing
 

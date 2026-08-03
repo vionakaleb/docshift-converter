@@ -5,9 +5,9 @@ import { Footer } from "@/components/layout/footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DocShift — Free Document Converter",
+  title: "DocShift - Free Document Converter",
   description:
-    "Convert Markdown, PDF, DOCX, and images. Split, merge, and crop PDFs. Free, open source, and privacy-first.",
+    "Convert Markdown, PDF, DOCX, and images. Split, merge, and crop PDFs. Build PPTX. Free, secured and privacy-first.",
   keywords: [
     "document converter",
     "markdown to pdf",
@@ -21,18 +21,18 @@ export const metadata: Metadata = {
     "open source",
   ],
   openGraph: {
-    title: "DocShift — Free Document Converter",
+    title: "DocShift - Free Document Converter",
     description:
-      "Convert Markdown, PDF, DOCX, and images. Split, merge, and crop PDFs. Free and open source.",
+      "Convert Markdown, PDF, DOCX, and images. Split, merge, and crop PDFs. Build PPTX. Free, secured and privacy-first.",
     type: "website",
     locale: "en_US",
     siteName: "DocShift",
   },
   twitter: {
     card: "summary_large_image",
-    title: "DocShift — Free Document Converter",
+    title: "DocShift - Free Document Converter",
     description:
-      "Convert Markdown, PDF, DOCX, and images. Split, merge, and crop PDFs. Free and open source.",
+      "Convert Markdown, PDF, DOCX, and images. Split, merge, and crop PDFs. Build PPTX. Free, secured and privacy-first.",
   },
   robots: {
     index: true,

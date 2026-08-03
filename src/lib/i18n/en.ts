@@ -1,9 +1,9 @@
 export const en = {
   app: {
     name: "DocShift",
-    tagline: "Convert, split, merge, and crop documents. Free and open source.",
+    tagline: "Convert, split, merge, and crop documents. Secured and free.",
     description:
-      "A free, open-source document converter. Transform Markdown, PDF, DOCX, and images with no upload limits and no accounts required.",
+      "A free & secured document converter. Transform Markdown, PDF, DOCX, and images with no upload limits and no accounts required.",
   },
   nav: {
     home: "Home",

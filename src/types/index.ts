@@ -7,9 +7,15 @@ export type ToolId =
   | "pdf-to-image"
   | "pdf-crop"
   | "pdf-split"
-  | "pdf-merge";
+  | "pdf-merge"
+  | "pptx-builder";
 
-export type ConversionStatus = "idle" | "uploading" | "converting" | "done" | "error";
+export type ConversionStatus =
+  | "idle"
+  | "uploading"
+  | "converting"
+  | "done"
+  | "error";
 
 export interface FileEntry {
   id: string;
@@ -30,7 +36,8 @@ export interface ToolConfig {
   acceptedTypes: string;
   maxFiles: number;
   icon: string;
-  category: "convert" | "manipulate";
+  category: "convert" | "manipulate" | "builder";
+  href?: string;
 }
 
 export interface ConversionResult {

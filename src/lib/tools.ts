@@ -100,6 +100,18 @@ export const TOOLS: ToolConfig[] = [
     icon: "Merge",
     category: "manipulate",
   },
+  {
+    id: "pptx-builder",
+    name: "PPTX Builder",
+    description: "Build a PowerPoint presentation with JavaScript",
+    inputLabel: "Script",
+    outputLabel: "Built PPTX",
+    acceptedTypes: ".pptx",
+    maxFiles: 10,
+    icon: "FileCode",
+    href: "/pptx-builder",
+    category: "builder",
+  },
 ];
 
 export function getToolConfig(toolId: string): ToolConfig | undefined {

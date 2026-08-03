@@ -9,9 +9,9 @@ export function generateMetadata(): Metadata {
   const tool = getToolConfig(toolId);
   if (!tool) return {};
   return {
-    title: `${tool.name} — DocShift`,
+    title: `${tool.name} - DocShift`,
     description: tool.description,
-    openGraph: { title: `${tool.name} — DocShift`, description: tool.description },
+    openGraph: { title: `${tool.name} - DocShift`, description: tool.description },
   };
 }
 

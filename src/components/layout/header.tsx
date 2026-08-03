@@ -21,14 +21,19 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <ArrowLeftRight className="h-5 w-5 text-primary" />
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-semibold tracking-tight"
+        >
+          <div className="flex h-5 w-5 items-center justify-center rounded-sm bg-primary/10">
+            <ArrowLeftRight className="h-4 w-4 text-primary" />
+          </div>
           <span>DocShift</span>
         </Link>
 
         <div className="flex items-center gap-1">
           <a
-            href="https://github.com"
+            href="https://github.com/vionakaleb/docshift-converter"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground"
