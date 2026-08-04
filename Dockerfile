@@ -12,6 +12,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Ensure public is present (if missing, create it)
 RUN test -d public || mkdir public
+ARG NEXT_PUBLIC_GA_ID
+ENV NEXT_PUBLIC_GA_ID=${NEXT_PUBLIC_GA_ID}
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
