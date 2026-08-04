@@ -3,8 +3,8 @@ export function Footer() {
     <footer className="border-t border-border/40 py-4 text-center text-sm text-muted-foreground">
       <div className="mx-auto max-w-5xl px-4 flex flex-col gap-1">
         <p>
-          DocShift is free & secured. Your files never leave your browser for
-          client-side operations.
+          DocShift is a secured, free, open-source tool. Your files never leave
+          your browser for client-side operations.
         </p>
 
         <p>
