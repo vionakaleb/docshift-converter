@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { defaultScript } from "@/app/tools/pptx-builder/defaultScript";
+import { Button } from "../ui/button";
 
 export default function PptxBuilder() {
   const [script, setScript] = useState(defaultScript);
@@ -79,8 +80,7 @@ export default function PptxBuilder() {
       />
 
       <div className="mt-4 flex flex-wrap items-center gap-4">
-        <button
-          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+        <Button
           onClick={() => {
             const transformed = transformToBuildFunction(script);
             setScript(transformed);
@@ -89,7 +89,7 @@ export default function PptxBuilder() {
           disabled={loading}
         >
           {loading ? "Generating..." : "Generate PPTX"}
-        </button>
+        </Button>
 
         {error && <span className="text-red-500">{error}</span>}
       </div>

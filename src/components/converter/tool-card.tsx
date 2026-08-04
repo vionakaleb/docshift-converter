@@ -36,7 +36,7 @@ export function ToolCard({ tool }: ToolCardProps) {
       href={`/tools/${tool.id}`}
       className={cn(
         "group relative flex flex-col gap-3 rounded-xl border border-border/60 p-5 transition-all",
-        "hover:border-primary/40 hover:bg-accent/50 hover:shadow-sm"
+        "hover:border-primary/40 hover:bg-accent/20 hover:shadow-sm"
       )}
     >
       <div className="flex items-center justify-between">
@@ -52,9 +52,9 @@ export function ToolCard({ tool }: ToolCardProps) {
       </div>
 
       <div className="mt-auto flex items-center gap-2 text-xs text-muted-foreground">
-        <span className="rounded-md bg-secondary px-2 py-0.5">{tool.inputLabel}</span>
+        <span className="rounded-md bg-secondary/40 px-2 py-0.5">{tool.inputLabel}</span>
         <ArrowRight className="h-3 w-3" />
-        <span className="rounded-md bg-secondary px-2 py-0.5">{tool.outputLabel}</span>
+        <span className="rounded-md bg-secondary/40 px-2 py-0.5">{tool.outputLabel}</span>
       </div>
     </Link>
   );

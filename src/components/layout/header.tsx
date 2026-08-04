@@ -1,8 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeftRight } from "lucide-react";
+import {
+  ArrowLeftRight,
+  Menu,
+  FileText,
+  FileSearch,
+  Image as ImageIcon,
+  Scissors,
+  Merge,
+  Presentation,
+  FileCode,
+} from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
+import { TOOLS } from "@/lib/tools";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  FileText,
+  FileSearch,
+  Image: ImageIcon,
+  Scissors,
+  Merge,
+  Presentation,
+  FileCode,
+};
 
 function GithubIcon({ className }: { className?: string }) {
   return (
@@ -18,6 +47,10 @@ function GithubIcon({ className }: { className?: string }) {
 }
 
 export function Header() {
+  const converters = TOOLS.filter((t) => t.category === "convert" && !t.hidden);
+  const manipulators = TOOLS.filter((t) => t.category === "manipulate");
+  const builders = TOOLS.filter((t) => t.category === "builder");
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-sm">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
@@ -32,6 +65,66 @@ export function Header() {
         </Link>
 
         <div className="flex items-center gap-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Menu"
+              >
+                <Menu className="h-4 w-4" />
+                Menu
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link href="/">Home</Link>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Converters</DropdownMenuLabel>
+              {converters.map((tool) => {
+                const Icon = iconMap[tool.icon] || FileText;
+                return (
+                  <DropdownMenuItem key={tool.id} asChild>
+                    <Link href={`/tools/${tool.id}`}>
+                      <Icon className="h-4 w-4 text-muted-foreground" />
+                      {tool.name}
+                    </Link>
+                  </DropdownMenuItem>
+                );
+              })}
+
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Tools</DropdownMenuLabel>
+              {manipulators.map((tool) => {
+                const Icon = iconMap[tool.icon] || FileText;
+                return (
+                  <DropdownMenuItem key={tool.id} asChild>
+                    <Link href={`/tools/${tool.id}`}>
+                      <Icon className="h-4 w-4 text-muted-foreground" />
+                      {tool.name}
+                    </Link>
+                  </DropdownMenuItem>
+                );
+              })}
+
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Builder</DropdownMenuLabel>
+              {builders.map((tool) => {
+                const Icon = iconMap[tool.icon] || FileText;
+                return (
+                  <DropdownMenuItem key={tool.id} asChild>
+                    <Link href={`/tools/${tool.id}`}>
+                      <Icon className="h-4 w-4 text-muted-foreground" />
+                      {tool.name}
+                    </Link>
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <a
             href="https://github.com/vionakaleb/docshift-converter"
             target="_blank"
