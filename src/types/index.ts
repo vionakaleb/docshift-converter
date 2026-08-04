@@ -6,7 +6,6 @@ export type ToolId =
   | "docx-to-md"
   | "image-to-pdf"
   | "pdf-to-image"
-  | "pdf-crop"
   | "pdf-split"
   | "pdf-merge"
   | "pptx-builder";

@@ -84,17 +84,6 @@ export const TOOLS: ToolConfig[] = [
     hidden: true,
   },
   {
-    id: "pdf-crop",
-    name: "PDF Crop",
-    description: "Visually crop PDF pages with drag selection",
-    inputLabel: "PDF",
-    outputLabel: "Cropped PDF",
-    acceptedTypes: ".pdf",
-    maxFiles: 1,
-    icon: "Crop",
-    category: "manipulate",
-  },
-  {
     id: "pdf-split",
     name: "PDF Split",
     description: "Split a PDF into separate page files",
