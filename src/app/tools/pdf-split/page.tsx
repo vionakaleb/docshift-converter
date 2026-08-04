@@ -11,8 +11,7 @@ import { splitPdf, splitPdfByRanges, getPdfPageCount } from "@/lib/converters";
 import { FileEntry, ConversionStatus, PageRange } from "@/types";
 
 export default function PdfSplitPage() {
-  const { files, addFiles, removeFile, clearFiles, downloadFile, downloadAll } =
-    useConverter("pdf-split");
+  const { files, addFiles, removeFile, clearFiles, downloadFile } = useConverter("pdf-split");
 
   const [pageCount, setPageCount] = useState(0);
   const [splitMode, setSplitMode] = useState<"all" | "range">("all");
@@ -72,6 +71,12 @@ export default function PdfSplitPage() {
       setIsConverting(false);
     }
   }, [files, splitMode, ranges]);
+
+  const handleDownloadAll = useCallback(() => {
+    for (const entry of results) {
+      downloadFile(entry);
+    }
+  }, [results, downloadFile]);
 
   const handleClear = useCallback(() => {
     clearFiles();
@@ -212,7 +217,7 @@ export default function PdfSplitPage() {
             )}
 
             {results.length > 1 && (
-              <Button variant="outline" onClick={downloadAll} className="gap-2">
+              <Button variant="outline" onClick={handleDownloadAll} className="gap-2">
                 <Download className="h-4 w-4" />
                 Download All
               </Button>
