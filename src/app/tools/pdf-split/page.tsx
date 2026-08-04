@@ -2,13 +2,13 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { ArrowLeft, Download, Loader2, Trash2, Scissors } from "lucide-react";
+import { ArrowLeft, Download, Loader2, Trash2, Scissors, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dropzone } from "@/components/converter/dropzone";
 import { FileList } from "@/components/converter/file-list";
 import { useConverter } from "@/hooks/use-converter";
-import { splitPdf, getPdfPageCount } from "@/lib/converters";
-import { FileEntry, ConversionStatus } from "@/types";
+import { splitPdf, splitPdfByRanges, getPdfPageCount } from "@/lib/converters";
+import { FileEntry, ConversionStatus, PageRange } from "@/types";
 
 export default function PdfSplitPage() {
   const { files, addFiles, removeFile, clearFiles, downloadFile, downloadAll } =
@@ -16,8 +16,7 @@ export default function PdfSplitPage() {
 
   const [pageCount, setPageCount] = useState(0);
   const [splitMode, setSplitMode] = useState<"all" | "range">("all");
-  const [rangeStart, setRangeStart] = useState(1);
-  const [rangeEnd, setRangeEnd] = useState(1);
+  const [ranges, setRanges] = useState<PageRange[]>([{ start: 1, end: 1 }]);
   const [isConverting, setIsConverting] = useState(false);
   const [results, setResults] = useState<FileEntry[]>([]);
 
@@ -27,10 +26,27 @@ export default function PdfSplitPage() {
       if (newFiles.length > 0) {
         const count = await getPdfPageCount(newFiles[0]);
         setPageCount(count);
-        setRangeEnd(count);
+        setRanges([{ start: 1, end: count }]);
       }
     },
     [addFiles]
+  );
+
+  const addRange = useCallback(() => {
+    setRanges((prev) => [...prev, { start: 1, end: pageCount }]);
+  }, [pageCount]);
+
+  const removeRange = useCallback((index: number) => {
+    setRanges((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const updateRange = useCallback(
+    (index: number, field: "start" | "end", value: number) => {
+      setRanges((prev) =>
+        prev.map((r, i) => (i === index ? { ...r, [field]: value } : r))
+      );
+    },
+    []
   );
 
   const handleSplit = useCallback(async () => {
@@ -39,15 +55,8 @@ export default function PdfSplitPage() {
 
     setIsConverting(true);
     try {
-      let indices: number[] | undefined;
-      if (splitMode === "range") {
-        indices = [];
-        for (let i = rangeStart - 1; i < rangeEnd; i++) {
-          indices.push(i);
-        }
-      }
-
-      const splitResults = await splitPdf(file, indices);
+      const splitResults =
+        splitMode === "range" ? await splitPdfByRanges(file, ranges) : await splitPdf(file);
       const entries: FileEntry[] = splitResults.map((r, i) => ({
         id: `split-${i}`,
         file,
@@ -62,7 +71,7 @@ export default function PdfSplitPage() {
     } finally {
       setIsConverting(false);
     }
-  }, [files, splitMode, rangeStart, rangeEnd]);
+  }, [files, splitMode, ranges]);
 
   const handleClear = useCallback(() => {
     clearFiles();
@@ -125,27 +134,58 @@ export default function PdfSplitPage() {
             </div>
 
             {splitMode === "range" && (
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-muted-foreground">From</label>
-                <input
-                  type="number"
-                  min={1}
-                  max={pageCount}
-                  value={rangeStart}
-                  onChange={(e) => setRangeStart(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="h-9 w-20 rounded-md border bg-background px-3 text-sm"
-                />
-                <label className="text-sm text-muted-foreground">to</label>
-                <input
-                  type="number"
-                  min={rangeStart}
-                  max={pageCount}
-                  value={rangeEnd}
-                  onChange={(e) =>
-                    setRangeEnd(Math.min(pageCount, parseInt(e.target.value) || pageCount))
-                  }
-                  className="h-9 w-20 rounded-md border bg-background px-3 text-sm"
-                />
+              <div className="space-y-2">
+                {ranges.map((range, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <label className="text-sm text-muted-foreground">From</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={pageCount}
+                      value={range.start}
+                      onChange={(e) =>
+                        updateRange(index, "start", Math.max(1, parseInt(e.target.value) || 1))
+                      }
+                      className="h-9 w-20 rounded-md border bg-background px-3 text-sm"
+                    />
+                    <label className="text-sm text-muted-foreground">to</label>
+                    <input
+                      type="number"
+                      min={range.start}
+                      max={pageCount}
+                      value={range.end}
+                      onChange={(e) =>
+                        updateRange(
+                          index,
+                          "end",
+                          Math.min(pageCount, parseInt(e.target.value) || pageCount)
+                        )
+                      }
+                      className="h-9 w-20 rounded-md border bg-background px-3 text-sm"
+                    />
+                    {ranges.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeRange(index)}
+                        className="text-muted-foreground hover:text-foreground"
+                        aria-label="Remove range"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addRange}
+                  className="gap-1.5"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add range
+                </Button>
               </div>
             )}
           </div>

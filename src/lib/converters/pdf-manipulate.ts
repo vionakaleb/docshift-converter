@@ -1,5 +1,5 @@
 import { PDFDocument } from "pdf-lib";
-import { CropArea, ConversionResult } from "@/types";
+import { CropArea, ConversionResult, PageRange } from "@/types";
 
 export async function mergePdfs(files: File[]): Promise<ConversionResult> {
   const merged = await PDFDocument.create();
@@ -41,6 +41,37 @@ export async function splitPdf(
     results.push({
       blob: new Blob([pdfBytes as BlobPart], { type: "application/pdf" }),
       filename: `${baseName}_page_${index + 1}.pdf`,
+    });
+  }
+
+  return results;
+}
+
+export async function splitPdfByRanges(
+  file: File,
+  ranges: PageRange[]
+): Promise<ConversionResult[]> {
+  const bytes = await file.arrayBuffer();
+  const source = await PDFDocument.load(bytes);
+  const totalPages = source.getPageCount();
+  const baseName = file.name.replace(/\.pdf$/i, "");
+  const results: ConversionResult[] = [];
+
+  for (const range of ranges) {
+    const start = Math.max(1, range.start);
+    const end = Math.min(totalPages, range.end);
+    if (start > end) continue;
+
+    const indices = Array.from({ length: end - start + 1 }, (_, i) => start - 1 + i);
+    const rangeDoc = await PDFDocument.create();
+    const copiedPages = await rangeDoc.copyPages(source, indices);
+    copiedPages.forEach((page) => rangeDoc.addPage(page));
+
+    const pdfBytes = await rangeDoc.save();
+    const label = start === end ? `page_${start}` : `pages_${start}-${end}`;
+    results.push({
+      blob: new Blob([pdfBytes as BlobPart], { type: "application/pdf" }),
+      filename: `${baseName}_${label}.pdf`,
     });
   }
 
