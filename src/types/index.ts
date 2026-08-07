@@ -10,6 +10,7 @@ export type ToolId =
   | "pdf-to-image"
   | "pdf-split"
   | "pdf-merge"
+  | "pdf-sign"
   | "pptx-builder";
 
 export type ConversionStatus =
@@ -59,3 +60,33 @@ export interface PageRange {
   start: number;
   end: number;
 }
+
+export type SignatureFontKey = "times-italic" | "helvetica" | "helvetica-bold" | "courier";
+
+interface SignatureBase {
+  id: string;
+  /** 1-indexed PDF page this signature is placed on. */
+  page: number;
+  /** Top-left position, as a % of the page's rendered width/height. */
+  xPct: number;
+  yPct: number;
+}
+
+export interface TextSignature extends SignatureBase {
+  type: "text";
+  text: string;
+  fontKey: SignatureFontKey;
+  color: string;
+  /** Font size in PDF points (the page's own coordinate space). */
+  fontSizePt: number;
+}
+
+export interface ImageSignature extends SignatureBase {
+  type: "image";
+  dataUrl: string;
+  widthPct: number;
+  heightPct: number;
+  naturalAspect: number;
+}
+
+export type SignatureElement = TextSignature | ImageSignature;

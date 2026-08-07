@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { TOOLS, getToolConfig } from "@/lib/tools";
 
 describe("TOOLS config", () => {
-  it("has 11 tools", () => {
-    expect(TOOLS).toHaveLength(11);
+  it("has 12 tools", () => {
+    expect(TOOLS).toHaveLength(12);
   });
 
   it("each tool has required fields", () => {

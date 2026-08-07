@@ -9,6 +9,7 @@ import {
   Presentation,
   FileCode,
   ClipboardType,
+  FileSignature,
   ArrowRight,
 } from "lucide-react";
 import { ToolConfig } from "@/types";
@@ -24,6 +25,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Presentation,
   FileCode,
   ClipboardType,
+  FileSignature,
 };
 
 interface ToolCardProps {

@@ -130,6 +130,17 @@ export const TOOLS: ToolConfig[] = [
     category: "manipulate",
   },
   {
+    id: "pdf-sign",
+    name: "Sign PDF",
+    description: "Add a typed or image signature to a PDF and drag it into place",
+    inputLabel: "PDF",
+    outputLabel: "Signed PDF",
+    acceptedTypes: ".pdf",
+    maxFiles: 1,
+    icon: "FileSignature",
+    category: "manipulate",
+  },
+  {
     id: "pptx-builder",
     name: "PPTX Builder",
     description: "Build a PowerPoint presentation with JavaScript",
