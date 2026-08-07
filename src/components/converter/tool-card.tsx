@@ -8,6 +8,7 @@ import {
   Merge,
   Presentation,
   FileCode,
+  ClipboardType,
   ArrowRight,
 } from "lucide-react";
 import { ToolConfig } from "@/types";
@@ -22,6 +23,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Merge,
   Presentation,
   FileCode,
+  ClipboardType,
 };
 
 interface ToolCardProps {

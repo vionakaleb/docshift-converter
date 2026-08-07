@@ -7,11 +7,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ImageConverter } from "./image-converter";
 import { MdConverter } from "./md-converter";
+import { RichTextConverter } from "./richtext-converter";
 
 interface Props {
   forwardTool: ToolConfig;
   reverseTool: ToolConfig;
-  convertType: "image" | "md";
+  convertType: "image" | "md" | "richtext";
 }
 
 export function BidirectionalWrapper({
@@ -73,6 +74,12 @@ export function BidirectionalWrapper({
           forwardTool={forwardTool}
           reverseTool={reverseTool}
           outputLabel={outputLabel}
+          isReversed={isReversed}
+        />
+      ) : convertType === "richtext" ? (
+        <RichTextConverter
+          forwardTool={forwardTool}
+          reverseTool={reverseTool}
           isReversed={isReversed}
         />
       ) : (

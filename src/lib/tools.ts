@@ -60,6 +60,30 @@ export const TOOLS: ToolConfig[] = [
     hidden: true,
   },
   {
+    id: "md-to-richtext",
+    name: "MD ⇆ Rich Text",
+    description:
+      "Convert Markdown into styled rich text you can copy, or paste rich text from Word/Docs/Notion and get clean Markdown back",
+    inputLabel: "Markdown",
+    outputLabel: "Rich Text",
+    acceptedTypes: ".md,.markdown,.txt",
+    maxFiles: 1,
+    icon: "ClipboardType",
+    category: "convert",
+  },
+  {
+    id: "richtext-to-md",
+    name: "Rich Text → MD",
+    description: "Paste rich text from Word, Docs, or Notion and get clean Markdown",
+    inputLabel: "Rich Text",
+    outputLabel: "Markdown",
+    acceptedTypes: "text/html",
+    maxFiles: 1,
+    icon: "ClipboardType",
+    category: "convert",
+    hidden: true,
+  },
+  {
     id: "image-to-pdf",
     name: "Image ⇆ PDF",
     description:

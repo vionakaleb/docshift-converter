@@ -17,7 +17,7 @@ Convert Markdown, PDF, DOCX, and images. Split, merge, and crop PDFs. Build PPTX
 
 ## Why this exists
 
-Generating complex formats with AI burns tokens. Markdown is cheap. DocShift converts cheap MD into the formats you actually need—all locally, privately, and for free.
+Generating complex formats with AI burns tokens. Markdown is cheap. DocShift converts cheap MD into the formats you actually need. All locally, privately, and for free.
 
 ## Privacy
 

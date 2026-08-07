@@ -4,6 +4,8 @@ export type ToolId =
   | "md-to-pptx"
   | "pdf-to-md"
   | "docx-to-md"
+  | "md-to-richtext"
+  | "richtext-to-md"
   | "image-to-pdf"
   | "pdf-to-image"
   | "pdf-split"
